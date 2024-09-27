@@ -1,5 +1,16 @@
 <nav class="navbar">
     <div class="container">
         <a href="{% url "shop:product_list" %}" class="navbar-brand fw-bold text-primary">ShopGo</a>
+        <div>
+
+            {% with items=cart|length %}
+                {% if items > 0 %}
+                    <a href="{% url "cart:cart_detail" %}">Cart {{items}}</a>
+                {% else %}
+                    Cart is empty
+                {% endif %}
+            {% endwith %}
+
+        </div>
     </div>
 </nav>

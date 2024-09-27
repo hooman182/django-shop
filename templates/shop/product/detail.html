@@ -13,7 +13,11 @@
                 <p>
                     {{product.description}}
                 </p>
-                <button class="btn btn-primary">Add to cart</button>
+                <form action="{% url "cart:cart_add" product.id %}" method="post">
+                    {{cartForm}}
+                    {% csrf_token %}
+                    <button class="btn btn-primary">Add to cart</button>
+                </form>
             </div>
         </div>
         
