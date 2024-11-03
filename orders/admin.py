@@ -12,4 +12,3 @@ class OrderAdmin(admin.ModelAdmin):
                     'email', 'address', 'postal_code', 'city', 'paid', 'created', 'updated']
     list_filter = ['paid', 'created', 'updated']
     inlines = [OrderItemInLine]
-from django.contrib.auth.models import User
