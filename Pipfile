@@ -7,8 +7,8 @@ name = "pypi"
 django = "*"
 pillow = "*"
 django-crispy-forms = "*"
+celery = "*"
+crispy-bootstrap5 = "*"
+django-mptt = "*"
 
 [dev-packages]
-
-[requires]
-python_version = "3.11"
