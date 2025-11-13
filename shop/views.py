@@ -1,23 +1,43 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from cart.forms import CartAddProductForm
-from shop.models import Category, Product
+from shop.models import Product
+from category.models import Category
+from django.views.generic import ListView, DetailView
 
 
-def prodcut_list(request, category_slug=None):
-    category = None
-    categories = Category.objects.all()
-    products = Product.objects.all()
-    cart_form = CartAddProductForm
+class ProductsList(ListView):
+    model = Product
+    template_name = 'shop/product/list.html'
+    paginate_by = 12
+    context_object_name = 'products'
     
-    if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
-        products = products.filter(category=category)
-
-    return render(request, 'shop/product/list.html', {'products': products, 'category': category, 'categories': categories, 'cart_form':cart_form})
-
-
-def product_detail(request, id, slug):
-    product = get_object_or_404(Product, id=id, slug=slug, available=True)
-    cart_form = CartAddProductForm
-    return render(request, 'shop/product/detail.html', {'product': product, 'cartForm': cart_form})
+    def get_queryset(self):
+        queryset = Product.objects.filter(available=True)
+        self.category = None
+        
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            self.category = get_object_or_404(Category, slug=category_slug)
+            queryset = queryset.filter(category=self.category)
+            
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        context['category'] = self.category
+        context['cart_form'] = CartAddProductForm()
+        return context
+    
+class ProductsDetail(DetailView):
+    model = Product
+    template_name = 'shop/product/detail.html'
+    context_object_name = 'product'
+    
+    def get_object(self, queryset=None):
+        return get_object_or_404(Product, id=self.kwargs['id'], slug=self.kwargs['slug'], available=True)
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart_form'] = CartAddProductForm()
+        return context
