@@ -1,20 +1,21 @@
 {% extends "_base.html" %}
+{% block title %}{{user.username | title}} سبدخرید{% endblock title %}
 {% block content %}
 <div class="container">
     
-    <h3>{% block title %}{{user.username | title}} Shopping Cart{% endblock title %}</h3>
+    <h3>سبد خرید {% firstof user.first_name user.username user.email %} </h3>
     <div class="row">
 
-        <div class="col-10">
+        <div class="col-8">
             <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Update</th>
-                    <th scope="col">Remove</th>
+                    <th scope="col">تصویر</th>
+                    <th scope="col">عنوان</th>
+                    <th scope="col">قیمت</th>
+                    <th scope="col">تعداد</th>
+                    <th scope="col">تغییر</th>
+                    <th scope="col">حذف</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -22,7 +23,7 @@
                         {% with product=item.product %}
                         <tr>
                             <td class="w-25">
-                                <img src="/media/{{product.image}}" alt="" class="w-75"> 
+                                <img src="/media/{{product.cover}}" alt="" class="w-75 h-50"> 
                             </td>
                             <td>
                                 {{product.name}}
@@ -39,24 +40,55 @@
                                     <div class="d-flex">
                                         {{item.update_quantity_form.quantity}}
                                         {{item.update_quantity_form.override}}
-                                        <button type="submit" class="btn border">Change</button>
+                                        <button type="submit" class="btn border">ذخیره</button>
                                     </div>
                                 </form>
                             </td>
                             <td>
                                 <form action="{% url "cart:cart_remove" product.id %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                    <button type="submit" class="btn btn-danger">حذف</button>
                                 </form>
                             </td>
                         </tr>
                         {% endwith %}
-                    {% endfor %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">سبد خرید شما خالی است.</td>
+                            </tr>
+                        {% endfor %}
                 </tbody>
             </table>
-            <p>Total prce: ${{cart.get_total_price}}</p>
         </div>
-        <a href="{% url "orders:order_create" %}" class="btn btn-dark">Checkout</a>
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">خلاصه سفارش</h5>
+                    <p class="card-text">تعداد کالاها: {{cart.get_total_quantity}}</p>
+                    <p class="card-text">جمع کل: {{cart.get_total_price.normalize}} تومان</p>
+                </div>
+                <hr class="m-2"/>
+                <div class="card-body">
+                    <h5 class="card-title">  ارسال</h5>
+                    <p class="card-text">جمع کل:  تومان</p>
+                </div>
+                <hr class="m-2"/>
+                <div class="card-body">
+                    <h5 class="card-title">سایر هزینه ها</h5>
+                    <p class="card-text">جمع کل:  تومان</p>
+                </div>
+                <hr class="m-2"/>
+                <div class="card-body">
+                    <h5 class="card-title">پرداخت</h5>
+                    <p class="card-text">جمع کل: {{cart.get_total_price.normalize}} تومان</p>
+                    <div class="d-grid">
+                        <a href="{% url "orders:order_create" %}" class="btn btn-dark">پرداخت</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
 
 </div>

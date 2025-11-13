@@ -3,7 +3,10 @@
 {% block content %}
 
     <div class="container mt-4">
-        <h3>{% block title %}Checkout{% endblock title %}</h3>
+        <div class="row my-4">
+            <h3>{% block title %}مشخصات سفارش شما{% endblock title %}</h3>
+        </div>
+        
         <div class="row">
 
             <div class="col">
@@ -11,30 +14,31 @@
                     {% csrf_token %}
                     {{order_form | crispy}}
                     <div class="d-grid">
-                        <button class="btn btn-dark" type="submit">Place Order</button>
+                        <button class="btn btn-dark" type="submit">ثبت سفارش</button>
                     </div>
                 </form>
             </div>
 
             <div class="col">
                 <div class="bg-light pt-3 rounded">
-                    <p class="px-4 fs-5 fw-semibold">Your order</p>
+                    <p class="px-4 fs-5 fw-semibold">سفارش شما</p>
                     <ul>
                         {% for item in cart %}
                         <li class="list-group-item d-flex justify-content-between align-items-start px-4">
     
                             <div class="">
-                                {{item.quantity}} x {{item.product.name}}
+                                {{item.quantity}} عدد {{item.product.name}}
                             </div>
-                            <span class="badge text-bg-primary rounded">
-                                ${{item.total_price}}
-                            </span>
-    
+                            <div class="">
+                                <span class="badge text-bg-primary rounded">{{item.total_price}}</span>
+                                <span class="badge text-bg-primary rounded">تومان</span>
+                            </div>
                         </li>
                         {% endfor %}
                     </ul>
                     <p class="text-center p-2 rounded text-white fw-bold bg-primary">
-                        Total: ${{cart.get_total_price}}
+                        <span class="">{{cart.get_total_price}}</span>
+                        <span class="">تومان</span>
                     </p>
                 </div>
             </div>
