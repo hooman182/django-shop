@@ -1,8 +1,6 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
-from shop.models import Product
 from django.urls import reverse
-
 # -------------------------------------------------------
 
 class Category(MPTTModel):
@@ -29,8 +27,6 @@ class Category(MPTTModel):
         return self.name
     
     def category_products(self):
+        
+        from shop.models import Product
         return Product.objects.filter(category=self).count()
-    
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.name)
-    #     super(Category, self).save(*args, **kwargs)
