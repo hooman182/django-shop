@@ -10,6 +10,7 @@ class Cart:
     def __init__(self, request):
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
+        # del self.session[settings.CART_SESSION_ID]
         if not cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
@@ -19,6 +20,9 @@ class Cart:
         Add a product to the cart or update its quantity
         '''
         product_id = str(product.id)
+        if not product_id:
+            raise ValueError("Product ID cannot be empty")
+
         if product_id not in self.cart:
             self.cart[product_id] = {
                 'quantity': 0, 'price': str(product.price)}
@@ -27,7 +31,7 @@ class Cart:
         else:
             self.cart[product_id]['quantity'] += quantity
         self.save()
-        
+
     def save(self):
         self.session.modified = True
 
@@ -39,30 +43,31 @@ class Cart:
         if product_id in self.cart:
             del self.cart[product_id]
             self.save()
-            
+
     def __iter__(self):
         '''
         Iterate over the items in the cart and get the products from the database.
         '''
-        produtc_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=produtc_ids)
+        product_ids = self.cart.keys()
+        print(product_ids)
+        products = Product.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
-        
+
         for product in products:
             cart[str(product.id)]['product']=product
-            
+
         for item in cart.values():
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
             yield item
-            
+
     def __len__(self):
         '''Count all items in the cart.'''
         return sum(item['quantity'] for item in self.cart.values())
-    
+
     def get_total_price(self):
         return sum(Decimal(item['price']) * item['quantity'] for item in self.cart.values())
-    
+
     def clear(self):
         del self.session[settings.CART_SESSION_ID]
         self.save()
