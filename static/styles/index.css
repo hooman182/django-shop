@@ -1,3 +1,14 @@
+@import "../fonts/index.css";
+
+body {
+    font-family: "IRANSans", IRANSans, "Vazir";
+}
+
 a {
     text-decoration: none;
+}
+
+main {
+    height: 100%;
+    margin: 2em auto;
 }
