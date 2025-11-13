@@ -8,11 +8,14 @@ class Order(models.Model):
     email = models.EmailField()
     address = models.CharField(max_length=200)
     postal_code = models.CharField(max_length=50)
+    province = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     paid = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
+    
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-
+    
     class Meta:
         ordering = ['-created']
         indexes = [models.Index(fields=['-created'])]
@@ -26,7 +29,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='order_items')
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=12, decimal_places=3)
     quantity = models.PositiveIntegerField(default=1)
     
     def __str__(self):
